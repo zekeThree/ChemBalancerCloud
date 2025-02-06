@@ -86,7 +86,6 @@ public class Main extends Thread {
 			prCoefs.add(1);
 		}
 	
-  //testing sill works cheeking if gitkraken sees this
 		 System.out.println(bust(recat, prod));
 		System.out.println();
 
