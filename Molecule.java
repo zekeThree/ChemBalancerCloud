@@ -1,4 +1,4 @@
-package chemBalancerPackage;
+package ChemBalancerCloud;
 import java.util.*;
 
 public class Molecule {
