@@ -1,4 +1,5 @@
 package ChemBalancerCloud;
+
 import java.util.*;
 
 public class Main extends Thread {
@@ -85,8 +86,8 @@ public class Main extends Thread {
 		for (int size = 0; size < prod.size(); size++) {
 			prCoefs.add(1);
 		}
-	
-		 System.out.println(bust(recat, prod));
+
+		System.out.println(bust(recat, prod));
 		System.out.println();
 
 	}
@@ -179,7 +180,7 @@ public class Main extends Thread {
 		// holds the elements string used to match the
 		ArrayList<String> elements = new ArrayList<String>();
 		// holds the elements in a specific molecule to add their qualtity to the total.
-		//e.i 
+		// e.i
 //		for (String elem : compounts.get(c).getElements()) {
 //			compElems.add(elem);
 //		}
@@ -208,13 +209,14 @@ public class Main extends Thread {
 		}
 		return rePr;
 	}
+
 // works/ sets the instance variable reactents or products dependent on the boolean React
 // sets them in the order findElements(Reactents);
 	public static void addElements(ArrayList<Molecule> Reactents, ArrayList<Molecule> compounts,
 			ArrayList<Integer> coefValues, boolean React) {
-		//holds the location of each element determend by Main.findElements(Reactens);
+		// holds the location of each element determend by Main.findElements(Reactens);
 		ArrayList<String> compountElements = new ArrayList<String>();
-		//holds the location of each element in the arrayList
+		// holds the location of each element in the arrayList
 		ArrayList<String> compElems = new ArrayList<String>();
 		compountElements = Main.findElements(Reactents);
 		compElems = Main.findElements(compounts);
@@ -257,7 +259,8 @@ public class Main extends Thread {
 		System.out.println("isEqual-----------");
 		return Main.compair(products, reactents);
 	}
-	//in progress
+
+	// in progress
 	public static ArrayList<Integer> bust(ArrayList<Molecule> recat, ArrayList<Molecule> prod) {
 
 		for (int balanceCoefsSize = 0; balanceCoefsSize < (recat.size() + prod.size()); balanceCoefsSize++) {
@@ -291,6 +294,7 @@ public class Main extends Thread {
 		return balanceCoefs;
 	}
 
+//works
 	public static void sum3(ArrayList<Molecule> recat, ArrayList<Molecule> prod, int k, ArrayList<Integer> maxCoefs) {
 
 		if (k > balanceCoefs.size()) {
@@ -327,6 +331,7 @@ public class Main extends Thread {
 		}
 		// System.out.println(balanceCoefs.subList(0, balanceCoefs.size()));
 	}
+
 // in progress
 	public static void sum4(ArrayList<Molecule> recat, ArrayList<Molecule> prod, int k, ArrayList<Integer> maxCoefs) {
 //		try {
@@ -339,47 +344,11 @@ public class Main extends Thread {
 			System.out.println("error soultion not in range- Rais the maxCoef||the equation might not be balencable");
 		} else {
 			if (k == 0) {
-//				if (balanceCoefs.get(0) >= maxCoefs.get(k)) {
-//					balanceCoefs.set(0, 1);
-//					Main.sum4(recat, prod, k + 1, maxCoefs);
-//				}
-//
-//				reCoefs = Main.split(balanceCoefs, recat, true);
-//				prCoefs = Main.split(balanceCoefs, recat, false);
-//
-//				if (Main.isEqual(recat, prod)) {
-//					System.out.println("reached end #1");
-//					System.out.println(balanceCoefs.subList(0, balanceCoefs.size()));
-//					break;
-//				}
-//				balanceCoefs.set(0, balanceCoefs.get(0) + 1);
-//				// -
-//				
-//				Main.addElements(recat, recat, Main.computCoef(recat, reCoefs), true);
-//				Main.addElements(recat, prod, Main.computCoef(prod, prCoefs), false);
-//				System.out.println("		this : " + reactentsOld.subList(0, reactentsOld.size()));
-////				try {
-////					Thread.sleep(4500);
-////				} catch (InterruptedException e) {
-////					// TODO Auto-generated catch block
-////					e.printStackTrace();
-////				}
-//				if (Main.hasElemGreater(recat, recat.get(k), true)) {
-//					balanceCoefs.set(k, 1);
-//					Main.sum4(recat, prod, k + 1, maxCoefs);
-//					break;
-//				}
-//				for (int reint = 0; reint < reactents.size(); reint++) {
-//					reactentsOld.set(reint, reactents.get(reint));
-//				}
-//
-//				System.out.println("		current attempt" + balanceCoefs.subList(0, balanceCoefs.size()));
-
 				for (int q = 0; q < maxCoefs.get(k); q++) {
-					balanceCoefs.set(k,balanceCoefs.get(k)+1);
+					balanceCoefs.set(k, balanceCoefs.get(k) + 1);
 					reCoefs = Main.split(balanceCoefs, recat, true);
 					prCoefs = Main.split(balanceCoefs, recat, false);
-	
+
 					if (Main.isEqual(recat, prod)) {
 						System.out.println("reached end #1");
 						System.out.println(balanceCoefs.subList(0, balanceCoefs.size()));
@@ -389,7 +358,7 @@ public class Main extends Thread {
 						balanceCoefs.set(k, 1);
 						Main.sum4(recat, prod, k + 1, maxCoefs);
 					}
-					
+
 				}
 
 			} else {
@@ -438,57 +407,54 @@ public class Main extends Thread {
 			}
 		}
 	}
+
 //in progress
 	public static boolean hasElemGreater(ArrayList<Molecule> recat, Molecule compound, boolean isReact) {
 		ArrayList<Boolean> hasElems = new ArrayList<>();
 		boolean hasElems2 = false;
-//		for(int size = 0; size <Main.) {
-//			last was here
-//		}
 		ArrayList<String> elementList = Main.findElements(recat);
 		ArrayList<Molecule> Compound = new ArrayList<>(Arrays.asList(compound));
 		ArrayList<String> elementMList = Main.findElements(Compound);
-		if (isReact) {
-			for (int size = 0; size < elementList.size(); size++) {
-				for (int size2 = 0; size2 < elementMList.size(); size2++) {
-					if (elementList.get(size).equals(elementMList.get(size2))) {
-
-						if (reactents.get(size) > products.get(size)) {
-							//hasElems2
-
+		
+		if(isReact) {
+			for(int allCompoundElem = 0;allCompoundElem<elementMList.size();allCompoundElem++ ) {
+				for(int elList = 0; elList<elementList.size();elList++) {
+					if(elementMList.get(allCompoundElem).equals(elementMList.get(elList))) {
+						if(reactents.get(elList)>products.get(elList)) {
+							hasElems.add(true);
+			//The position of a hasElems value corasponds to a element in the coumpound
+			// and if that value is greater for the reactents than the products
+			//to help tell if count sould jummp to the next coumpound
 						}
-
+						else {
+							hasElems.add(false);
+						}
 					}
 				}
 			}
-		} else {
-			for (int size = 0; size < elementList.size(); size++) {
-				for (int size2 = 0; size2 < elementMList.size(); size2++) {
-					if (elementList.get(size).equals(elementMList.get(size2))) {
-						System.out.println("sublist reactents : " + reactents.subList(0, reactents.size()));
-						System.out.println("sublist products : " + products.subList(0, products.size()));
-						if (reactentsOld.get(size) < products.get(size)) {
-							//hasElems2
-
-						}
-
-					}
-				}
-			}
-//			int count = 0;
-//			for(int baSize = 0; baSize< balanceCoefs.size()-prCoefs.size();baSize++) {
-//				if(balanceCoefs.get(baSize)==1) {
-//					count++;
+		}
+		else {
+			// about to leave left of here 
+//			for(int allCompoundElem = 0;allCompoundElem<elementMList.size();allCompoundElem++ ) {
+//				for(int elList = 0; elList<elementList.size();elList++) {
+//					if(elementMList.get(allCompoundElem).equals(elementMList.get(elList))) {
+//						if(reactents.get(elList)>products.get(elList)) {
+//							hasElems.add(true);
+//			//The position of a hasElems value corasponds to a element in the coumpound
+//			// and if that value is greater for the reactents than the products
+//			//to help tell if count sould jummp to the next coumpound
+//						}
+//						else {
+//							hasElems.add(false);
+//						}
+//					}
 //				}
 //			}
-//			if(count == balanceCoefs.size()-prCoefs.size()) {
-//				hasElems = false;
-//			}
-
 		}
 
 		return hasElems2;
 	}
+
 //works
 	public static ArrayList<Integer> split(ArrayList<Integer> toBeSpl, ArrayList<Molecule> recat, boolean front) {
 		ArrayList<Integer> part = new ArrayList<Integer>();
@@ -507,4 +473,3 @@ public class Main extends Thread {
 	}
 
 }
-
