@@ -87,8 +87,6 @@ public class Main extends Thread {
 		}
 	
   //testing sill works cheeking if gitkraken sees this
-	//this is on the cloud (oooo...)
-		//fucking works!
 		 System.out.println(bust(recat, prod));
 		System.out.println();
 
