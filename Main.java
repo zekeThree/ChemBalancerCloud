@@ -345,23 +345,26 @@ public class Main extends Thread {
 		if (k < SetVal) {
 
 			for (int q = 0; q < maxCoefs.get(k); q++) {
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+//				try {
+//					Thread.sleep(500);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 				Main.updateBalanceAndRePr(k, balanceCoefs.get(k) + 1, recat);
 				System.out.println("		current attempt(IN)" + balanceCoefs.subList(0, balanceCoefs.size()));
 				if (Main.isEqual(recat, prod)) {
 
-					System.out.println("solution : " + balanceCoefs.subList(0, balanceCoefs.size()));
+					System.out.println("			solution : " + balanceCoefs.subList(0, balanceCoefs.size()));
 					return true;
 				}
 				if (k < reCoefs.size() && balanceCoefs.get(k) != 1) {
 					if (Main.hasElemGreater(recat, recat.get(k), true)) {
 						Main.updateBalanceAndRePr(k, balanceCoefs.get(k) - 1, recat);
-						Main.sum4Helper(recat, prod, k + 1, maxCoefs, SetVal);
+						if(Main.sum4Helper(recat, prod, k + 1, maxCoefs, SetVal))
+						{
+							return true;
+						}
 						break;
 					}
 				} else if (balanceCoefs.get(k) != 1) {
@@ -381,7 +384,9 @@ public class Main extends Thread {
 							break;
 						}
 						Main.updateBalanceAndRePr(k, balanceCoefs.get(k) - 1, recat);
-						Main.sum4Helper(recat, prod, k + 1, maxCoefs, SetVal);
+						if(Main.sum4Helper(recat, prod, k + 1, maxCoefs, SetVal)) {
+							return true;
+						}
 						break;
 					}
 				}
@@ -397,12 +402,12 @@ public class Main extends Thread {
 	public static void sum4(ArrayList<Molecule> recat, ArrayList<Molecule> prod, int k, ArrayList<Integer> maxCoefs) {
 
 		for (int q = 0; q < maxCoefs.get(k); q++) {
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				Thread.sleep(500);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			Main.updateBalanceAndRePr(k, balanceCoefs.get(k) + 1, recat);
 			System.out.println("		current attempt" + balanceCoefs.subList(0, balanceCoefs.size()));
 			if (Main.isEqual(recat, prod)) {
