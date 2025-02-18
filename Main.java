@@ -5,7 +5,6 @@ import java.util.*;
 public class Main extends Thread {
 	// holds the values of reactents/products after they are multiplyed by the coefs
 	private static ArrayList<Integer> reactents = new ArrayList<Integer>();
-	private static ArrayList<Integer> reactentsOld = new ArrayList<Integer>();
 	private static ArrayList<Integer> products = new ArrayList<Integer>();
 	// hold the reactents coefs
 	private static ArrayList<Integer> reCoefs = new ArrayList<Integer>();
@@ -14,10 +13,9 @@ public class Main extends Thread {
 	// holds the coefs that balance the equation
 	private static ArrayList<Integer> balanceCoefs = new ArrayList<Integer>();
 	// used for a feature of sum4
-	private static ArrayList<Integer> postValRe = new ArrayList<>();
-	private static ArrayList<Integer> postValPr = new ArrayList<>();
-
-	private static ArrayList<Integer> maxCoefs = new ArrayList<>(Arrays.asList(100, 100, 100, 100, 100, 100));
+	private static ArrayList<Integer> rolloverCoefsRe = new ArrayList<>();
+	private static ArrayList<Integer> rolloverCoefsPr = new ArrayList<>();
+	private static ArrayList<Integer> maxCoefs = new ArrayList<>(Arrays.asList(60, 60, 60, 60, 60, 60));
 
 	public static void main(String[] args) {
 		String answerBook = "";
@@ -29,6 +27,7 @@ public class Main extends Thread {
 		ArrayList<Molecule> prod = new ArrayList<Molecule>();
 
 		Scanner book = new Scanner(System.in);
+
 		System.out.println("type m go to the next molucule, p to swich to products  and t to finsh ");
 
 		while (true) {
@@ -72,23 +71,23 @@ public class Main extends Thread {
 
 		for (int size = 0; size < Main.findElements(recat).size(); size++) {
 			reactents.add(0);
-			reactentsOld.add(0);
-			postValRe.add(0);
 		}
 		for (int size = 0; size < recat.size(); size++) {
 			reCoefs.add(1);
+			rolloverCoefsRe.add(1);
 		}
 
 		for (int size = 0; size < Main.findElements(prod).size(); size++) {
-			products.add(0);
-			postValPr.add(0);
+			products.add(0);    
 		}
 		for (int size = 0; size < prod.size(); size++) {
 			prCoefs.add(1);
+			rolloverCoefsPr.add(1);
 		}
-
+		
 		System.out.println(bust(recat, prod));
 		System.out.println();
+		book.close();
 
 	}
 
@@ -246,11 +245,14 @@ public class Main extends Thread {
 			}
 
 		}
-		System.out.println("	" + compountElements.subList(0, compountElements.size()));
+		// System.out.println(" " + compountElements.subList(0,
+		// compountElements.size()));
 
 	}
 
 	public static boolean isEqual(ArrayList<Molecule> recat, ArrayList<Molecule> prod) {
+		reCoefs = Main.split(balanceCoefs, recat, true);
+		prCoefs = Main.split(balanceCoefs, recat, false);
 		System.out.println("isEqual-----------");
 		Main.addElements(recat, recat, Main.computCoef(recat, reCoefs), true);
 		System.out.println("Reactents :" + reactents.subList(0, reactents.size()));
@@ -273,7 +275,7 @@ public class Main extends Thread {
 //		balanceCoefs.set(4,55);
 //		balanceCoefs.set(5,24);
 		System.out.println("first " + balanceCoefs.subList(0, balanceCoefs.size()));
-		Main.updateBalanceAndRePr(0, 1, recat);
+		Main.updateBalanceAndRePr(0, 1, recat, prod);
 		if (Main.isEqual(recat, prod)) {
 			return balanceCoefs;
 		}
@@ -289,16 +291,13 @@ public class Main extends Thread {
 //
 //		}
 		while (true) {
-			for (int all = 0; all < balanceCoefs.size(); all++) {
-				Main.sum4(recat, prod, all, maxCoefs);
-			}
+				Main.sum4(recat, prod, 0);
 			if (Main.isEqual(recat, prod)) {
 				System.out.println("reached end #2");
 				System.out.println("solution : " + balanceCoefs.subList(0, balanceCoefs.size()));
 				return balanceCoefs;
 			}
 		}
-
 	}
 
 //works
@@ -340,115 +339,108 @@ public class Main extends Thread {
 	}
 
 // in progress
-	public static boolean sum4Helper(ArrayList<Molecule> recat, ArrayList<Molecule> prod, int k,
-			ArrayList<Integer> maxCoefs, int SetVal) {
-		if (k < SetVal) {
-
-			for (int q = 0; q < maxCoefs.get(k); q++) {
-//				try {
-//					Thread.sleep(500);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
+//	public static void sum4Helper(ArrayList<Molecule> recat, ArrayList<Molecule> prod, int k, int SetVal) {
+//
+////		 - Left off here try keeping a arrayList of rolloverCoefs for reactents and then
+//		// treating products like reactents counting based on the rolloverCoefs
+//		if (k < SetVal) {
+//			if(k==0){
+//			for (int q = 0; q < rolloverCoefs.get(k); q++) {
+//				Main.updateBalanceAndRePr(k, balanceCoefs.get(k) + 1, recat, prod);
+//				System.out.println("		current attempt(in)" + balanceCoefs.subList(0, balanceCoefs.size()));
+//				if (Main.isEqual(recat, prod)) {
+//					Main.updateBalanceAndRePr(k, balanceCoefs.get(k) + 1, recat, prod);
+//					System.out.println("reached end #2");
+//					System.out.println("solution : " + balanceCoefs.subList(0, balanceCoefs.size()));
+//					System.exit(0);
+//					break;
 //				}
-				Main.updateBalanceAndRePr(k, balanceCoefs.get(k) + 1, recat);
-				System.out.println("		current attempt(IN)" + balanceCoefs.subList(0, balanceCoefs.size()));
-				if (Main.isEqual(recat, prod)) {
-
-					System.out.println("			solution : " + balanceCoefs.subList(0, balanceCoefs.size()));
-					return true;
-				}
-				if (k < reCoefs.size() && balanceCoefs.get(k) != 1) {
-					if (Main.hasElemGreater(recat, recat.get(k), true)) {
-						Main.updateBalanceAndRePr(k, balanceCoefs.get(k) - 1, recat);
-						if(Main.sum4Helper(recat, prod, k + 1, maxCoefs, SetVal))
-						{
-							return true;
-						}
-						break;
-					}
-				} else if (balanceCoefs.get(k) != 1) {
-//				ArrayList<Integer> holder = new ArrayList<Integer>();
-//				for(int allBalVal : balanceCoefs) {
-//					holder.add(allBalVal);
+//			}
+//			balanceCoefs.set(k, 1);
+//			Main.sum4Helper(recat, prod, k+1, SetVal);
+//			}
+//			else {
+//				if(balanceCoefs.get(k)>= rolloverCoefs.get(k)) {
+//					balanceCoefs.set(k, 1);
+//					Main.sum4Helper(recat, prod, k+1, SetVal);
 //				}
-					if (Main.sum4Helper(recat, prod, 0, maxCoefs, SetVal-1)) {
-						return true;
-					}
-//				System.out.println("Holder(IN) :"+holder.subList(0, holder.size()));
-//				for(int allBalVal = 0; allBalVal<holder.size();allBalVal++) {
-//					Main.updateBalanceAndRePr(allBalVal, holder.get(allBalVal), recat);
+//				else {
+//				Main.updateBalanceAndRePr(k, balanceCoefs.get(k) + 1, recat, prod);
+//				System.out.println("		current attempt(in)" + balanceCoefs.subList(0, balanceCoefs.size()));
+//				if (Main.isEqual(recat, prod)) {
+//					Main.updateBalanceAndRePr(k, balanceCoefs.get(k) + 1, recat, prod);
+//					System.out.println("reached end #3");
+//					System.out.println("solution : " + balanceCoefs.subList(0, balanceCoefs.size()));
+//					System.exit(0);
 //				}
-					if (Main.hasElemGreater(recat, prod.get(k - reCoefs.size()), false)) {
-						if (k == balanceCoefs.size() - 1) {
-							break;
-						}
-						Main.updateBalanceAndRePr(k, balanceCoefs.get(k) - 1, recat);
-						if(Main.sum4Helper(recat, prod, k + 1, maxCoefs, SetVal)) {
-							return true;
-						}
-						break;
-					}
-				}
-
-			}
-		}
-//		else if(k==SetVal-1) {
-//			
+//				Main.sum4Helper(recat, prod, 0, SetVal);
+//				}
+//			}
 //		}
-		return false;
-	}
+//		
+//	}
 
-	public static void sum4(ArrayList<Molecule> recat, ArrayList<Molecule> prod, int k, ArrayList<Integer> maxCoefs) {
-
-		for (int q = 0; q < maxCoefs.get(k); q++) {
+	public static void sum4(ArrayList<Molecule> recat, ArrayList<Molecule> prod, int k) {
+		if (k == 0) {
+			for (int q = 0; q < maxCoefs.get(k); q++) {
 //			try {
-//				Thread.sleep(500);
+//				Thread.sleep(75);
 //			} catch (InterruptedException e) {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
-			Main.updateBalanceAndRePr(k, balanceCoefs.get(k) + 1, recat);
+				Main.updateBalanceAndRePr(k, balanceCoefs.get(k) + 1, recat, prod);
+				System.out.println("		current attempt" + balanceCoefs.subList(0, balanceCoefs.size()));
+				if (Main.isEqual(recat, prod)) {
+					System.out.println("reached end #1");
+					System.out.println("solution : " + balanceCoefs.subList(0, balanceCoefs.size()));
+					break;
+				}
+				if (k < reCoefs.size() && balanceCoefs.get(k) != 1) {
+					if (Main.hasElemGreater(recat, recat.get(k), true)) {
+						// rolloverCoefsRe.set(k, balanceCoefs.get(k));
+						Main.updateBalanceAndRePr(k, 1, recat, prod);
+						Main.sum4(recat, prod, k + 1);
+						break;
+					}
+				}
+
+			}
+
+		} else {
+			Main.updateBalanceAndRePr(k, balanceCoefs.get(k) + 1, recat, prod);
 			System.out.println("		current attempt" + balanceCoefs.subList(0, balanceCoefs.size()));
 			if (Main.isEqual(recat, prod)) {
 				System.out.println("reached end #1");
 				System.out.println("solution : " + balanceCoefs.subList(0, balanceCoefs.size()));
-				break;
 			}
+			if(balanceCoefs.get(k)>maxCoefs.get(k)) {
+				Main.updateBalanceAndRePr(k,  1, recat, prod);
+				Main.sum4(recat, prod, k + 1);
+			}
+			else {
+			
 			if (k < reCoefs.size() && balanceCoefs.get(k) != 1) {
 				if (Main.hasElemGreater(recat, recat.get(k), true)) {
-					Main.updateBalanceAndRePr(k, balanceCoefs.get(k) - 1, recat);
-					break;
+					// rolloverCoefsRe.set(k, balanceCoefs.get(k));
+					Main.updateBalanceAndRePr(k, 1, recat, prod);
+					Main.sum4(recat, prod, k + 1);
 				}
-			} else if (balanceCoefs.get(k) != 1) {
-
-				ArrayList<Integer> holder = new ArrayList<Integer>();
-				for (int allBalVal : balanceCoefs) {
-					holder.add(allBalVal);
-				}
-				if (Main.sum4Helper(recat, prod, 0, maxCoefs, k)) {
-					break;
-				}
-				System.out.println("Holder(ORI) :" + holder.subList(0, holder.size()));
-				for (int allBalVal = 0; allBalVal < holder.size(); allBalVal++) {
-					Main.updateBalanceAndRePr(allBalVal, holder.get(allBalVal), recat);
-				}
-				if (Main.hasElemGreater(recat, prod.get(k - reCoefs.size()), false)) {
-					if (k == balanceCoefs.size() - 1) {
-						break;
-					}
-					Main.updateBalanceAndRePr(k, balanceCoefs.get(k) - 1, recat);
-					break;
-				}
+			} else if (balanceCoefs.get(k) != 1 && k >= reCoefs.size()) {
+//					if (Main.hasElemGreater(recat, prod.get(k - reCoefs.size()), false)) {
+//					}
+//					
+//					rolloverCoefsPr.set(k - reCoefs.size(), balanceCoefs.get(k));
 			}
-
+			}
 		}
-	}// 2 Al +6 HCl -> 2 AlCl3 + 3 H2
+		
+	}
 
-//in progress
+//assuming the intagere values of reactents and products are up to data
 	public static boolean hasElemGreater(ArrayList<Molecule> recat, Molecule compound, boolean isReact) {
 		ArrayList<Boolean> hasElems = new ArrayList<>();
-		boolean hasAllElemGreater = false;
+		boolean hasAnyElemGreater = false;
 		ArrayList<String> elementList = Main.findElements(recat);
 		ArrayList<Molecule> Compound = new ArrayList<>(Arrays.asList(compound));
 		ArrayList<String> elementMList = Main.findElements(Compound);
@@ -485,9 +477,10 @@ public class Main extends Thread {
 				}
 			}
 		}
+		hasAnyElemGreater = false;
 		for (Boolean val : hasElems) {
 			if (val) {
-				hasAllElemGreater = true;
+				hasAnyElemGreater = true;
 			}
 		}
 		System.out.println("compound elements: " + elementMList.subList(0, elementMList.size()));
@@ -499,16 +492,18 @@ public class Main extends Thread {
 		}
 		System.out.println(" : " + hasElems.subList(0, hasElems.size()));
 
-		return hasAllElemGreater;
+		return hasAnyElemGreater;
 	}
 
-	public static void updateBalanceAndRePr(int k, int newValue, ArrayList<Molecule> recat) {
+	public static void updateBalanceAndRePr(int k, int newValue, ArrayList<Molecule> recat, ArrayList<Molecule> prod) {
 		balanceCoefs.set(k, newValue);
 		reCoefs = Main.split(balanceCoefs, recat, true);
 		prCoefs = Main.split(balanceCoefs, recat, false);
+		Main.addElements(recat, recat, Main.computCoef(recat, reCoefs), true);
+		Main.addElements(recat, prod, Main.computCoef(prod, prCoefs), false);
 	}
 
-//works
+	// works
 	public static ArrayList<Integer> split(ArrayList<Integer> toBeSpl, ArrayList<Molecule> recat, boolean front) {
 		ArrayList<Integer> part = new ArrayList<Integer>();
 		for (int halfish = 0; halfish < toBeSpl.size(); halfish++) {
